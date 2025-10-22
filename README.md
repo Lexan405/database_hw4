@@ -57,6 +57,7 @@ pg_restore — для восстановления из этой копии (е�
 
 ```bash
 pg_dump -U postgres -h localhost -F c -b -v -f finance_db.backup finance_db
+```bash
 
 -U postgres — подключаемся от пользователя postgres,
 -h localhost — хост (можно опустить, если локально),
@@ -69,12 +70,16 @@ finance_db — имя базы данных.
 Пример: восстановление базы данных
 
 Перед восстановлением нужно создать пустую базу (если её нет):
+
 ```bash
 createdb -U postgres -h localhost finance_db_restored
+```bash
 
 А теперь восстанавливаем из бэкапа:
+
 ```bash
 pg_restore -U postgres -h localhost -d finance_db_restored -v finance_db.backup
+```bash
 
 Флаги:
 
@@ -106,11 +111,13 @@ finance_db.backup — наш файл бэкапа.
 [mysqld]
 log-bin=mysql-bin
 server-id=1
+```bash
 
 2. Сделать полный бэкап (точка отсчёта)
 
 ```bash
 mysqldump -u root -p --single-transaction --routines --triggers --master-data=2 finance_db > full_backup.sql
+```bash
 
 3. Инкрементные изменения — это просто файлы binlog
 Новые изменения автоматически пишутся в файлы вроде:
@@ -121,6 +128,7 @@ mysql-bin.000002
 
 ```bash
 cp /var/lib/mysql/mysql-bin.* /backup/mysql/binlogs/
+```bash
 
 # Восстановление
 
@@ -128,9 +136,11 @@ cp /var/lib/mysql/mysql-bin.* /backup/mysql/binlogs/
 
 ```bash
 mysql -u root -p finance_db < full_backup.sql
+```bash
 
 2. Накатить изменения из binlog до нужного момента:
+
 ```bash
 mysqlbinlog --stop-datetime="2025-10-22 13:00:00" /backup/mysql/binlogs/mysql-bin.000003 | mysql -u root -p
-
+```bash
 
